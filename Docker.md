@@ -47,6 +47,47 @@ This enables easy, portable deployment.
 
 Containers use the host system’s OS kernel and libraries, minimizing their size compared to virtual machines. For example, a Docker container for Ubuntu is just around 22 MB, compared to a 2.3 GB VM image.
 
+Below is the screenshot of official ubuntu base image which you can use for your container. It's just ~ 22 MB, isn't it very small ? on a contrary if you look at official ubuntu VM image it will be close to ~ 2.3 GB. So the container base image is almost 100 times less than VM image.
+
+![Screenshot 2023-02-08 at 3 12 38 PM](https://user-images.githubusercontent.com/43399466/217493284-85411ae0-b283-4475-9729-6b082e35fc7d.png)
+
+To provide a better picture of files and folders that containers base images have and files and folders that containers use from host operating system (not 100 percent accurate -> varies from base image to base image). Refer below.
+
+
+### Files and Folders in containers base images
+
+```
+    /bin: contains binary executable files, such as the ls, cp, and ps commands.
+
+    /sbin: contains system binary executable files, such as the init and shutdown commands.
+
+    /etc: contains configuration files for various system services.
+
+    /lib: contains library files that are used by the binary executables.
+
+    /usr: contains user-related files and utilities, such as applications, libraries, and documentation.
+
+    /var: contains variable data, such as log files, spool files, and temporary files.
+
+    /root: is the home directory of the root user.
+```
+
+
+### Files and Folders that containers use from host operating system
+
+```
+    The host's file system: Docker containers can access the host file system using bind mounts, which allow the container to read and write files in the host file system.
+
+    Networking stack: The host's networking stack is used to provide network connectivity to the container. Docker containers can be connected to the host's network directly or through a virtual network.
+
+    System calls: The host's kernel handles system calls from the container, which is how the container accesses the host's resources, such as CPU, memory, and I/O.
+
+    Namespaces: Docker containers use Linux namespaces to create isolated environments for the container's processes. Namespaces provide isolation for resources such as the file system, process ID, and network.
+
+    Control groups (cgroups): Docker containers use cgroups to limit and control the amount of resources, such as CPU, memory, and I/O, that a container can access.
+    
+```
+
 ---
 
 ## Docker Overview
@@ -62,10 +103,18 @@ Docker is a platform that enables containerization. It helps you:
 
 ![Docker Architecture](https://user-images.githubusercontent.com/43399466/217507877-212d3a60-143a-4a1d-ab79-4bb615cb4622.png)
 
-### Docker Lifecycle
-1. **docker build**: Build container images from a Dockerfile.
-2. **docker run**: Run containers from images.
-3. **docker push**: Push container images to a repository like DockerHub.
+### Docker LifeCycle 
+
+We can use the above Image as reference to understand the lifecycle of Docker.
+
+There are three important things,
+
+1. docker build -> builds docker images from Dockerfile
+2. docker run   -> runs container from docker images
+3. docker push  -> push the container image to public/private regestries to share the docker images.
+
+![Screenshot 2023-02-08 at 4 32 13 PM](https://user-images.githubusercontent.com/43399466/217511949-81f897b2-70ee-41d1-b229-38d0572c54c7.png)
+
 
 ---
 
@@ -147,72 +196,96 @@ Docker was originally developed by Solomon Hykes at dotCloud in 2013. It evolved
 
 # Docker Networking and Volumes: Simple Explanation
 
-## Networking: How Containers Communicate
+# Docker Networking
 
-Containers run separately but often need to talk to each other or to your computer. Networking helps with this. Imagine it like a road between two houses—without a road, no one can visit the other house.
+Networking allows containers to communicate with each other and with the host system. Containers run isolated from the host system
+and need a way to communicate with each other and with the host system.
 
-- **Bridge Network**: This is like a private road between the containers. They can communicate with each other without bothering anyone else.
-  - You can create your own bridge network to control which containers can talk to each other.
-  
-- **Host Network**: This gives containers access to the same network as your computer. It’s like opening your home to the container, so it uses the same "road" as your PC. But be careful—this is less safe since the container can access your computer’s network directly.
-  
-- **Overlay Network**: This lets containers on different computers communicate, like a global road connecting houses in different cities.
+By default, Docker provides two network drivers for you, the bridge and the overlay drivers. 
 
-Here are some simple examples for Docker **Networking** 
-### Docker Networking Examples
+```
+docker network ls
+```
 
-#### 1. **Bridge Networking Example:**
-The default network type in Docker. You can create a custom bridge network for your containers.
+```
+NETWORK ID          NAME                DRIVER
+xxxxxxxxxxxx        none                null
+xxxxxxxxxxxx        host                host
+xxxxxxxxxxxx        bridge              bridge
+```
 
-- **Create a custom bridge network:**
-    ```bash
-    docker network create my_bridge
-    ```
 
-- **Run a container attached to this custom network:**
-    ```bash
-    docker run -d --name web --network my_bridge nginx
-    ```
+### Bridge Networking
 
-- **List all networks, including your custom bridge:**
-    ```bash
-    docker network ls
-    ```
+The default network mode in Docker. It creates a private network between the host and containers, allowing
+containers to communicate with each other and with the host system.
 
-- **Connect another container to the same network:**
-    ```bash
-    docker run -d --name app --network my_bridge alpine sleep 3600
-    ```
+![image](https://user-images.githubusercontent.com/43399466/217745543-f40e5614-ac34-4b78-85a9-91b24512388d.png)
 
-- **Attach an existing container to a network:**
-    ```bash
-    docker network connect my_bridge web
-    ```
+If you want to secure your containers and isolate them from the default bridge network you can also create your own bridge network.
 
-Now, both containers (`web` and `app`) can communicate with each other through the `my_bridge` network.
+```
+docker network create -d bridge my_bridge
+```
 
-#### 2. **Host Networking Example:**
-This allows your container to share the host's network stack.
+Now, if you list the docker networks, you will see a new network.
 
-- **Run a container using host networking:**
-    ```bash
-    docker run -d --network host nginx
-    ```
+```
+docker network ls
 
-This makes the container share the same network interface as the host.
+NETWORK ID          NAME                DRIVER
+xxxxxxxxxxxx        bridge              bridge
+xxxxxxxxxxxx        my_bridge           bridge
+xxxxxxxxxxxx        none                null
+xxxxxxxxxxxx        host                host
+```
 
-#### 3. **Overlay Networking Example (for Swarm mode):**
-Overlay networks are used when you need containers to communicate across multiple hosts.
+This new network can be attached to the containers, when you run these containers.
 
-- **Create an overlay network (requires Docker Swarm):**
-    ```bash
-    docker network create -d overlay my_overlay
-    ```
+```
+docker run -d --net=my_bridge --name db training/postgres
+```
 
-- **Run a service attached to the overlay network:**
-    ```bash
-    docker service create --name web --network my_overlay nginx
-    ```
+This way, you can run multiple containers on a single host platform where one container is attached to the default network and 
+the other is attached to the my_bridge network.
+
+These containers are completely isolated with their private networks and cannot talk to each other.
+
+![image](https://user-images.githubusercontent.com/43399466/217748680-8beefd0a-8181-4752-a098-a905ebed5d2a.png)
+
+
+However, you can at any point of time, attach the first container to my_bridge network and enable communication
+
+```
+docker network connect my_bridge web
+```
+
+![image](https://user-images.githubusercontent.com/43399466/217748726-7bb347d0-3736-4f89-bdff-31d240b15150.png)
+
+
+### Host Networking
+
+This mode allows containers to share the host system's network stack, providing direct access to the host system's network.
+
+To attach a host network to a Docker container, you can use the --network="host" option when running a docker run command. When you use this option, the container has access to the host's network stack, and shares the host's network namespace. This means that the container will use the same IP address and network configuration as the host.
+
+Here's an example of how to run a Docker container with the host network:
+
+```
+docker run --network="host" <image_name> <command>
+```
+
+Keep in mind that when you use the host network, the container is less isolated from the host system, and has access to all of the host's network resources. This can be a security risk, so use the host network with caution.
+
+Additionally, not all Docker image and command combinations are compatible with the host network, so it's important to check the image documentation or run the image with the --network="bridge" option (the default network mode) first to see if there are any compatibility issues.
+
+### Overlay Networking
+
+This mode enables communication between containers across multiple Docker host machines, allowing containers to be connected to a single network even when they are running on different hosts.
+
+### Macvlan Networking
+
+This mode allows a container to appear on the network as a physical host rather than as a container.
 
 
 # Docker Volumes
