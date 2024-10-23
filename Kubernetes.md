@@ -94,7 +94,7 @@ If you're looking to get started with Kubernetes, here are some of the most popu
 
 ## 🛠 Getting Started with Kubernetes
 
-To set up a **Kubernetes Single Node Cluster Using Minikube on AWS EC2**, check out my detailed guide: [How to Set Up Minikube on AWS EC2]( ).
+To set up a **Kubernetes Single Node Cluster Using Minikube on AWS EC2**, check out my detailed guide: [How to Set Up Minikube on AWS EC2](https://github.com/rahmancdp/Openshift-basics-to-pro/blob/main/Minikube%20on%20AWS%20EC2.md).
 
 ### Key Steps:
 1. **Install Docker**: Kubernetes needs a container runtime, and Docker is a great choice.
