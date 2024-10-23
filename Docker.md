@@ -1,20 +1,6 @@
 # Docker: Zero-to-Hero Course
 
-Welcome to the Docker course! This guide will introduce you to Docker, a popular containerization tool that makes application deployment efficient and portable.
-
-## Table of Contents
-1. [What is a Container?](#what-is-a-container)
-2. [Containers vs Virtual Machines](#containers-vs-virtual-machines)
-3. [Why Are Containers Lightweight?](#why-are-containers-lightweight)
-4. [Docker Overview](#docker-overview)
-5. [Installing Docker on Linux](#installing-docker-on-linux)
-6. [Basic Docker Commands](#basic-docker-commands)
-    - Pulling an Image
-    - Running an Image
-    - Pushing an Image
-7. [Container Runtime Basics](#container-runtime-basics)
-
----
+Welcome to the Docker course! by Abdul Rahman. This guide will introduce you to Docker, a popular containerization tool that makes application deployment efficient and portable.
 
 ## What is a Container?
 
