@@ -251,7 +251,7 @@ This message shows that your installation appears to be working correctly.
 
 ## Great Job, Now start with the examples folder to write your first Dockerfile and move to the next examples. Happy Learning :)
 
-### Clone this repository and move to example folder
+### Clone this repository and move to Openshift-basics-to-pro folder
 
 ```
 git clone https://github.com/rahmancdp/Openshift-basics-to-pro.git
@@ -324,6 +324,19 @@ docker images
 
 ```
 docker run -it rahman2001/name-image:latest
+```
+
+Output
+```
+╒════╤══════════════╤══════════════╕
+│    │ Name         │ Profession   │
+╞════╪══════════════╪══════════════╡
+│  0 │ Abdul Farook │ Engineer     │
+├────┼──────────────┼──────────────┤
+│  1 │ Abdul Rahman │ Architect    │
+├────┼──────────────┼──────────────┤
+│  2 │ Shajahan     │ Engineer     │
+╘════╧══════════════╧══════════════╛
 ```
  
 ### Push the Image to DockerHub and share it with the world
